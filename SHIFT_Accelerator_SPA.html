@@ -1,0 +1,474 @@
+<!-- Chosen Palette: Calm Corporate (Warm Neutrals: bg-gray-100, bg-white; Primary: text-indigo-700; Subtle Accent: bg-indigo-600) -->
+<!-- Application Structure Plan: I've designed a single-page application (SPA) with a sticky top-bar navigation to facilitate easy exploration of the 7 strategic pillars from the report. This dashboard-like structure (Context, Opportunity, Hook, Projects, Asks, Metrics, Next Steps) allows users to jump to any section, making it more interactive and user-friendly than a linear report. Key interactions include: 1) An interactive donut chart in the "Hook" section to visualize the MSME dataset. 2) JavaScript-powered toggles in the "Projects" section to switch between project details. 3) Two horizontal bar charts in the "Metrics" section to quantify KPIs. 4) A custom HTML/CSS timeline for "Next Steps." This structure was chosen to transform the static plan into an explorable, data-driven application. -->
+<!-- Visualization & Content Choices: 
+- Section 1 (Context): Goal: Inform. Method: 4-column static cards (HTML/Tailwind). Justification: Clear, high-level grouping. (NO SVG/Mermaid).
+- Section 2 (Opportunity): Goal: Inform. Method: 3-column static cards (HTML/Tailwind). Justification: Highlights the 3 core goals. (NO SVG/Mermaid).
+- Section 3 (Hook): Goal: Compare (Composition). Method: Donut Chart (Chart.js/Canvas). Justification: Visually represents the composition of the 1.5M MSME dataset, which is the "Proven Impact Engine." (NO SVG/Mermaid).
+- Section 4 (Projects): Goal: Organize/Compare. Method: Interactive JS Toggles (HTML/Tailwind/JS). Justification: More engaging than a static list and compactly presents the two projects. (NO SVG/Mermaid).
+- Section 5 (Asks): Goal: Inform. Method: 3-column static cards (HTML/Tailwind). Justification: Clearly presents the 3 key resource needs. (NO SVG/Mermaid).
+- Section 6 (Metrics): Goal: Compare/Inform. Method: Two Horizontal Bar Charts (Chart.js/Canvas). Justification: Visually quantifies the "ILF Contract" KPIs, making the targets much clearer than a table. (NO SVG/Mermaid).
+- Section 7 (Next Steps): Goal: Organize (Change). Method: Vertical Timeline (HTML/CSS/Tailwind). Justification: A classic, professional visualization for a time-based process, built without SVG/Mermaid. (NO SVG/Mermaid).
+-->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fundfina: SHIFT Accelerator SPA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa; 
+        }
+        
+        .nav-link {
+            @apply px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors;
+        }
+        .nav-link.active {
+            @apply bg-indigo-100 text-indigo-700;
+        }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        
+        .h-bar-chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; 
+            max-height: 350px;
+        }
+        
+        .content-card {
+            @apply bg-white rounded-lg shadow-lg p-6;
+        }
+        
+        .project-tab {
+            @apply px-6 py-3 font-semibold text-lg rounded-t-lg -mb-px transition-all duration-300;
+        }
+        .project-tab.active {
+            @apply bg-white text-indigo-700;
+        }
+        .project-tab:not(.active) {
+            @apply bg-transparent text-gray-500 hover:text-gray-700;
+        }
+    </style>
+</head>
+<body class="text-gray-900">
+
+    
+    <nav class="sticky top-0 bg-white shadow-md z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                
+                <div class="flex-shrink-0">
+                    <span class="text-2xl font-bold text-indigo-700">Fundfina SHIFT Strategy</span>
+                </div>
+                
+                <div class="hidden md:flex md:items-center md:space-x-4" id="nav-links">
+                    <a href="#context" class="nav-link">Context</a>
+                    <a href="#opportunity" class="nav-link">Opportunity</a>
+                    <a href="#hook" class="nav-link">Hook</a>
+                    <a href="#projects" class="nav-link">Projects</a>
+                    <a href="#asks" class="nav-link">Asks</a>
+                    <a href="#metrics" class="nav-link">Metrics</a>
+                    <a href="#timeline" class="nav-link">Next Steps</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    
+    <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+
+        
+        <section id="context" class="pt-20 -mt-16 mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">1. The Core Context</h2>
+            <p class="text-lg text-gray-700 mb-8 max-w-4xl">
+                This application synthesizes our strategic plan for the SHIFT Accelerator. Our success hinges on understanding the ecosystem: we are the selected venture, operating within a program run by key implementers, with the ultimate goal of satisfying the impact mandate of the program's funders.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="content-card text-center">
+                    <div class="text-4xl mb-3">🏢</div>
+                    <h3 class="text-xl font-semibold mb-2 text-indigo-700">The Venture</h3>
+                    <p class="text-lg font-bold">Fundfina</p>
+                </div>
+                <div class="content-card text-center">
+                    <div class="text-4xl mb-3">🌍</div>
+                    <h3 class="text-xl font-semibold mb-2 text-indigo-700">The Implementers</h3>
+                    <p class="text-lg font-bold">Seedstars (Global) & RiseUp (MENA)</p>
+                </div>
+                <div class="content-card text-center">
+                    <div class="text-4xl mb-3">💰</div>
+                    <h3 class="text-xl font-semibold mb-2 text-indigo-700">The Funders</h3>
+                    <p class="text-lg font-bold">ILFF, SDC, ADC</p>
+                </div>
+                <div class="content-card text-center">
+                    <div class="text-4xl mb-3">🎯</div>
+                    <h3 class="text-xl font-semibold mb-2 text-indigo-700">The Program</h3>
+                    <p class="text-lg font-bold">SHIFT Accelerator (Impact-Linked Finance)</p>
+                </div>
+            </div>
+        </section>
+
+        
+        <section id="opportunity" class="pt-20 -mt-16 mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">2. The Opportunity (The "Why")</h2>
+            <p class="text-lg text-gray-700 mb-8 max-w-4xl">
+                This program is a pivotal, non-linear opportunity. We are focused on three core strategic outcomes that build upon each other: using non-dilutive capital to fund R&D, which de-risks our main VC round, all while accelerating our expansion into key new markets.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="content-card">
+                    <div class="text-4xl mb-3">💸</div>
+                    <h3 class="text-xl font-semibold mb-2 text-indigo-700">Secure Non-Dilutive Capital</h3>
+                    <p class="text-gray-700">Win an "Impact-Linked Finance" (ILF) grant to fund our core MENA R&D without diluting equity.</p>
+                </div>
+                <div class="content-card">
+                    <div class="text-4xl mb-3">🛡️</div>
+                    <h3 class="text-xl font-semibold mb-2 text-indigo-700">De-Risk Series A</h3>
+                    <p class="text-gray-700">Use the DFI "stamp of approval" and World Bank backing to attract VCs at favorable terms.</p>
+                </div>
+                <div class="content-card">
+                    <div class="text-4xl mb-3">🚀</div>
+                    <h3 class="text-xl font-semibold mb-2 text-indigo-700">Accelerate MENA Expansion</h3>
+                    <p class="text-gray-700">Gain a "warm" entry and regulatory passport (via Qatar Sandbox) into Saudi Arabia & UAE.</p>
+                </div>
+            </div>
+        </section>
+
+        
+        <section id="hook" class="pt-20 -mt-16 mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">3. Our Strategic Hook (The "How")</h2>
+            <p class="text-lg text-gray-700 mb-8 max-w-4xl">
+                Our core advantage is proof, not promise. We are the "Proven Impact Engine." While others pitch ideas, we bring 4 years of granular data from our AI models, trained on a unique "missing middle" dataset. This visualization shows the composition of that dataset.
+            </p>
+            <div class="content-card">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="order-2 md:order-1">
+                        <h3 class="text-2xl font-semibold mb-4">Our "Missing Middle" Dataset (1.5M MSMEs)</h3>
+                        <p class="text-gray-700 mb-4">
+                            Our **TrueScore™ AI** is already trained on one of the world's largest datasets for this segment. This data proves we can find, underwrite, and scale lending to the very cohorts SHIFT targets.
+                        </p>
+                        <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+                            <span class="font-bold text-indigo-700">Our Pitch:</span> We are the lowest-risk, highest-upside partner to deploy their impact capital. We are not *pivoting* to impact; we are *scaling* it.
+                        </div>
+                    </div>
+                    <div class="order-1 md:order-2">
+                        <div class="chart-container">
+                            <canvas id="msmeDonutChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        
+        <section id="projects" class="pt-20 -mt-16 mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">4. Proposed Projects (The "What")</h2>
+            <p class="text-lg text-gray-700 mb-8 max-w-4xl">
+                We will pitch two tangible, high-impact projects built on our existing, proven platforms (Madad & NUQTA). This demonstrates we are ready for immediate deployment. Click the tabs below to explore each project.
+            </p>
+            <div>
+                <div class="flex border-b border-gray-300">
+                    <button id="btn-proj1" class="project-tab active" data-target="content-proj1">Project 1: "G&M TrueScore"</button>
+                    <button id="btn-proj2" class="project-tab" data-target="content-proj2">Project 2: "Women-Led SCF"</button>
+                </div>
+                <div class="content-card rounded-t-none border-t-0">
+                    
+                    <div id="content-proj1" class="project-content">
+                        <h3 class="text-2xl font-bold text-indigo-700 mb-3">Project 1: "G&M TrueScore" (The Core ILF Pitch)</h3>
+                        <ul class="list-disc list-inside space-y-3 text-lg">
+                            <li><strong class="font-semibold">What:</strong> A new, targeted AI scoring model for MENA's women & migrant entrepreneurs.</li>
+                            <li><strong class="font-semibold">Action:</strong> Use the ILF grant to acquire MENA data & re-train our **TrueScore™/creditGPT** engine.</li>
+                            <li><strong class="font-semibold">Value:</strong> Creates a new, licensable SaaS product for MENA banks, driving systemic, long-term impact.</li>
+                        </ul>
+                    </div>
+                    
+                    <div id="content-proj2" class="project-content hidden">
+                        <h3 class="text-2xl font-bold text-indigo-700 mb-3">Project 2: "Women-Led Supply Chain Finance" (The Quick Win)</h3>
+                        <ul class="list-disc list-inside space-y-3 text-lg">
+                            <li><strong class="font-semibold">What:</strong> A dedicated, ring-fenced financing pool for women-owned suppliers.</li>
+                            <li><strong class="font-semibold">Action:</strong> Deploy our **MerchantBikri (Invoice Financing)** product using ILF catalytic capital.</li>
+                            <li><strong class="font-semibold">Value:</strong> A quick, highly measurable impact win that leverages our existing platform and partners from day one.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        
+        <section id="asks" class="pt-20 -mt-16 mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">5. Key Asks (Our Needs)</h2>
+            <p class="text-lg text-gray-700 mb-8 max-w-4xl">
+                To execute this plan, our needs are targeted and specific. We are not just asking for mentorship; we are asking for the specific resources that will unlock our proposed projects and accelerate our joint success.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="content-card">
+                    <div class="text-4xl mb-3">💵</div>
+                    <h3 class="text-xl font-semibold mb-2 text-indigo-700">CAPITAL</h3>
+                    <p class="text-gray-700"><strong class="text-gray-900">$500k+ ILF Grant</strong> to fund "G&M TrueScore" R&D and hire a dedicated data scientist, mitigating key-person risk.</p>
+                </div>
+                <div class="content-card">
+                    <div class="text-4xl mb-3">🌐</div>
+                    <h3 class="text-xl font-semibold mb-2 text-indigo-700">NETWORK</h3>
+                    <p class="text-gray-700"><strong class="text-gray-900">High-level introductions</strong> to DFI funding managers (ILFF, SDC) and target regulators/banks in Saudi Arabia & UAE.</p>
+                </div>
+                <div class="content-card">
+                    <div class="text-4xl mb-3">📊</div>
+                    <h3 class="text-xl font-semibold mb-2 text-indigo-700">DATA</h3>
+                    <p class="text-gray-700"><strong class="text-gray-900">Warm introductions</strong> to MENA data providers (banks, telcos, payment processors) to fuel our AI models.</p>
+                </div>
+            </div>
+        </section>
+
+        
+        <section id="metrics" class="pt-20 -mt-16 mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">6. Success Metrics (The "ILF Contract")</h2>
+            <p class="text-lg text-gray-700 mb-8 max-w-4xl">
+                We will be measured on two parallel fronts. These are not just goals; they form our proposed "Impact-Linked Finance Contract." We get paid for delivering on the Impact KPIs, which in turn drives our Commercial KPIs.
+            </p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="content-card">
+                    <h3 class="text-2xl font-semibold mb-4 text-center">Impact Metrics (The ILF KPIs)</h3>
+                    <div class="h-bar-chart-container">
+                        <canvas id="impactKpiChart"></canvas>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <h3 class="text-2xl font-semibold mb-4 text-center">Commercial Metrics (The VC KPIs)</h3>
+                    <div class="h-bar-chart-container">
+                        <canvas id="commercialKpiChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        
+        <section id="timeline" class="pt-20 -mt-16 mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">7. Immediate Next Steps</h2>
+            <p class="text-lg text-gray-700 mb-8 max-w-4xl">
+                Our plan is actionable immediately. We have a clear roadmap for the first 72 hours post-acceptance to build momentum and demonstrate our preparedness.
+            </p>
+            <div class="relative max-w-2xl mx-auto">
+                
+                <div class="absolute left-5 top-0 h-full w-0.5 bg-indigo-300"></div>
+                
+                <div class="relative mb-10">
+                    <div class="absolute flex items-center justify-center w-10 h-10 bg-indigo-600 rounded-full left-0 z-10">
+                        <span class="text-white font-bold">1</span>
+                    </div>
+                    <div class="ml-16 content-card">
+                        <h3 class="text-lg font-semibold text-indigo-700 mb-1">Nov 11: Onboarding Call</h3>
+                        <p class="text-gray-700">Introduce the "G&M TrueScore" concept and ask: "Who in the ILFF/SDC network should we engage to co-design this ILF project?"</p>
+                    </div>
+                </div>
+                
+                <div class="relative mb-10">
+                    <div class="absolute flex items-center justify-center w-10 h-10 bg-indigo-600 rounded-full left-0 z-10">
+                        <span class="text-white font-bold">2</span>
+                    </div>
+                    <div class="ml-16 content-card">
+                        <h3 class="text-lg font-semibold text-indigo-700 mb-1">Nov 12: Internal Draft</h3>
+                        <p class="text-gray-700">Draft the 1-page "G&M TrueScore" concept note, ready to share with the SHIFT team immediately after the call.</p>
+                    </div>
+                </div>
+                
+                <div class="relative mb-10">
+                    <div class="absolute flex items-center justify-center w-10 h-10 bg-indigo-600 rounded-full left-0 z-10">
+                        <span class="text-white font-bold">3</span>
+                    </div>
+                    <div class="ml-16 content-card">
+                        <h3 class="text-lg font-semibold text-indigo-700 mb-1">Nov 12: Team Assessment</h3>
+                        <p class="text-gray-700">Assess AI/ML team resource load and finalize the budget for a new data scientist hire, to be funded by the ILF grant.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            
+            const requiredTooltipCallbacks = {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) {
+                        return label.join(' ');
+                    } else {
+                        return label;
+                    }
+                }
+            };
+
+            
+            const donutCtx = document.getElementById('msmeDonutChart');
+            if (donutCtx) {
+                new Chart(donutCtx.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Internal Migrants (750k)', 'Women-Owned (165k)', 'Other MSMEs (585k)'],
+                        datasets: [{
+                            data: [750000, 165000, 585000],
+                            backgroundColor: ['#4338CA', '#F59E0B', '#10B981'],
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                            },
+                            tooltip: {
+                                callbacks: requiredTooltipCallbacks
+                            }
+                        }
+                    }
+                });
+            }
+
+            
+            const impactKpiCtx = document.getElementById('impactKpiChart');
+            if (impactKpiCtx) {
+                new Chart(impactKpiCtx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: [
+                            ['Onboard Women', 'MSMEs (500+)'],
+                            ['Credit to MSMEs', '($5M)'],
+                            ['Onboard Migrant', 'MSMEs (1000+)'],
+                            ['NTC MSMEs', '(80%)']
+                        ],
+                        datasets: [{
+                            label: 'Impact KPI Targets',
+                            data: [500, 5, 1000, 80],
+                            backgroundColor: '#3B82F6', 
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                beginAtZero: true
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: requiredTooltipCallbacks
+                            }
+                        }
+                    }
+                });
+            }
+
+            
+            const commercialKpiCtx = document.getElementById('commercialKpiChart');
+            if (commercialKpiCtx) {
+                new Chart(commercialKpiCtx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: [
+                            ['Series A Close', '(Target: Q2 2026)'],
+                            ['SaaS Partners', '(Target: 2-3)'],
+                            ['Non-Dilutive', 'Funding ($500k+)']
+                        ],
+                        datasets: [{
+                            label: 'Commercial KPI Targets',
+                            data: [1, 3, 500], 
+                            backgroundColor: '#F59E0B', 
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                beginAtZero: true
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: requiredTooltipCallbacks
+                            }
+                        }
+                    }
+                });
+            }
+
+            
+            const projBtn1 = document.getElementById('btn-proj1');
+            const projBtn2 = document.getElementById('btn-proj2');
+            const contentProj1 = document.getElementById('content-proj1');
+            const contentProj2 = document.getElementById('content-proj2');
+
+            if (projBtn1 && projBtn2 && contentProj1 && contentProj2) {
+                projBtn1.addEventListener('click', () => {
+                    projBtn1.classList.add('active');
+                    projBtn2.classList.remove('active');
+                    contentProj1.classList.remove('hidden');
+                    contentProj2.classList.add('hidden');
+                });
+                projBtn2.addEventListener('click', () => {
+                    projBtn2.classList.add('active');
+                    projBtn1.classList.remove('active');
+                    contentProj2.classList.remove('hidden');
+                    contentProj1.classList.add('hidden');
+                });
+            }
+
+            
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: '-20% 0px -70% 0px' }); 
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>
